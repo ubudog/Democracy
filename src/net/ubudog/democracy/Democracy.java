@@ -148,7 +148,7 @@ public class Democracy extends JavaPlugin {
 			sender.sendMessage("/startpoll pollname option1 option2");
 			sender.sendMessage("/stoppoll pollname"); 
 			
-			sender.sendMessage("On GitHub at: http://github.com/ubudog"); 
+			sender.sendMessage("On GitHub at: http://github.com/ubudog/Democracy"); 
 				}
 			}
 		}
