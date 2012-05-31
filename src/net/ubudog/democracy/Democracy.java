@@ -80,10 +80,10 @@ public class Democracy extends JavaPlugin {
 			if (args.length < 2) { 
 				sender.sendMessage("Please state the name of the poll as an argument."); 
 				sender.sendMessage("Example: /startpoll ExamplePoll OptionOne OptionTwo"); 
-			} else if (!votingOptions1.toString().equals("yay")) {
-				sender.sendMessage("First option must be 'yay'"); 
-			} else if (!votingOptions2.toString().equals("nay")) { 
-				sender.sendMessage("Second option must be 'nay'"); 
+			} else if (!votingOptions1.toString().equalsIgnoreCase("yay")) {
+				sender.sendMessage("First option must be 'yay'."); 
+			} else if (!votingOptions2.toString().equalsIgnoreCase("nay")) { 
+				sender.sendMessage("Second option must be 'nay'."); 
 			} else { 
 				Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[Democracy] " + ChatColor.WHITE + "New poll started by " + sender.getName() + ", poll name is " + pollName + ".");
 				Bukkit.getServer().broadcastMessage(ChatColor.YELLOW + "[Democracy] " + ChatColor.WHITE + "Options for voting are: " + votingOptions1 + ", " + votingOptions2); 
