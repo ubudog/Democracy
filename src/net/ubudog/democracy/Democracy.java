@@ -29,18 +29,19 @@ public class Democracy extends JavaPlugin {
 		log = this.getLogger(); 
 		log.info("[Democracy] Democracy has been enabled.");
 		
-		// Create the plugin dir
-		try { 
-			File plugindir = new File("Democracy"); 
-			if (plugindir.exists() == false) { 
-				log.info("[Democracy] Running first-run setup..."); 
-				plugindir.mkdir();
-				
-				File votesdir = new File("votes"); 
-			}
-		} catch (Exception e) { 
-			
-		}
+		// Create files and first-run stuff
+				try { 
+					File plugindir = new File("Democracy"); 
+					if (plugindir.exists() == false) { 
+						log.info("[Democracy] Running first-run setup..."); 
+						plugindir.mkdir();
+						
+						File votesdir = new File("Democracy/votes"); 
+						votesdir.mkdir(); 
+					}
+				} catch (Exception e) { 
+					
+				}
 	}
 	
 	public void onDisable() { 
@@ -112,7 +113,7 @@ public class Democracy extends JavaPlugin {
 				
 				// Write votes to file
 				try {
-					FileWriter fstream = new FileWriter("results-vote-" + pollName + ".txt");
+					FileWriter fstream = new FileWriter("Democracy/votes/results-vote-" + pollName + ".txt");
 					BufferedWriter out = new BufferedWriter(fstream);
 					out.write("-- Voting Results --");
 					out.write("Yay Votes: " + yayVotes); 
@@ -128,7 +129,9 @@ public class Democracy extends JavaPlugin {
 					
 					out.close();
 				} catch (Exception e) { 
-					log.info("Exception occured."); 
+					log.info("[Democracy] Exception occured when writing voting results to file.");
+					log.info("[Democracy] Message: " + e.getMessage()); 
+					sender.sendMessage(ChatColor.GREEN + "[Democracy]" + ChatColor.WHITE + " Exception occured when writing voting results to file."); 
 				}
 		
 		if (cmd.getName().equalsIgnoreCase("pollstatus")) { 

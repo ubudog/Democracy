@@ -8,7 +8,7 @@ commands:
       usage: /vote <pollid>
    startpoll:
       description: Use this to start a poll on the server.
-      usage: /startpoll <pollname> <options>
+      usage: /startpoll <pollname> <yay> <nay>
    stoppoll:
       description: Use this to stop a poll on the server.
       usage: /stoppoll <pollname> 
