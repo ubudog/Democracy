@@ -24,6 +24,8 @@ public class Democracy extends JavaPlugin {
 	int yayVotes = 0; 
 	int nayVotes = 0; 
 	String vote; 
+	File plugindir; 
+	File votesdir; 
 	
 	public void onEnable() { 
 		log = this.getLogger(); 
@@ -31,16 +33,17 @@ public class Democracy extends JavaPlugin {
 		
 		// Create files and first-run stuff
 				try { 
-					File plugindir = new File("Democracy"); 
+					plugindir = new File("plugins/Democracy"); 
 					if (plugindir.exists() == false) { 
 						log.info("[Democracy] Running first-run setup..."); 
 						plugindir.mkdir();
 						
-						File votesdir = new File("Democracy/votes"); 
+						votesdir = new File("plugins/Democracy/votes"); 
 						votesdir.mkdir(); 
 					}
 				} catch (Exception e) { 
-					
+					log.info("[Democracy] Error occured during first run setup."); 
+					log.info("[Democracy] Error is as such: " + e.getStackTrace()); 
 				}
 	}
 	
@@ -116,18 +119,18 @@ public class Democracy extends JavaPlugin {
 				
 				// Write votes to file
 				try {
-					FileWriter fstream = new FileWriter("Democracy/votes/results-vote-" + pollName + ".txt");
+					FileWriter fstream = new FileWriter(votesdir + "/results-vote-" + pollName + ".txt");
 					BufferedWriter out = new BufferedWriter(fstream);
-					out.write("-- Voting Results --");
-					out.write("Yay Votes: " + yayVotes); 
-					out.write("\n Nay Votes: " + nayVotes); 
+					out.append("-- Voting Results --");
+					out.append("Yay Votes: " + yayVotes); 
+					out.append("\n Nay Votes: " + nayVotes); 
 					
 					if (yayVotes > nayVotes) { 
-						out.write("\n Yays won."); 
+						out.append("\n Yays won."); 
 					}
 					
 					if (nayVotes > yayVotes) { 
-						out.write("\n Nays won."); 
+						out.append("\n Nays won."); 
 					}
 					
 					out.close();
@@ -138,11 +141,15 @@ public class Democracy extends JavaPlugin {
 				}
 		
 		if (cmd.getName().equalsIgnoreCase("pollstatus")) { 
-			sender.sendMessage("-- Current Voting Status --"); 
-			sender.sendMessage("Poll Status: " + pollStatus); 
-			sender.sendMessage("Current poll: " + pollName);
-			sender.sendMessage("Yay Votes: " + yayVotes); 
-			sender.sendMessage("Nay Votes: " + nayVotes); 
+			if (args.length < 1) { 
+				sender.sendMessage("You must provide a poll name.");
+			} else { 
+				sender.sendMessage("-- Current Voting Status --");
+				sender.sendMessage("Poll Status: " + pollStatus);
+				sender.sendMessage("Current poll: " + pollName);
+				sender.sendMessage("Yay Votes: " + yayVotes);
+				sender.sendMessage("Nay Votes: " + nayVotes);
+			}
 		}
 		
 		if (cmd.getName().equalsIgnoreCase("democracy")) { 
