@@ -24,27 +24,29 @@ public class Democracy extends JavaPlugin {
 	int yayVotes = 0; 
 	int nayVotes = 0; 
 	String vote; 
-	File plugindir; 
+	File plugindir;  
 	File votesdir; 
+	double version = 0.1; 
+	boolean hasVoted = false; 
 	
 	public void onEnable() { 
 		log = this.getLogger(); 
 		log.info("[Democracy] Democracy has been enabled.");
+		log.info("[Democracy] Version " + version); 
 		
-		// Create files and first-run stuff
-				try { 
-					plugindir = new File("plugins/Democracy"); 
-					if (plugindir.exists() == false) { 
-						log.info("[Democracy] Running first-run setup..."); 
-						plugindir.mkdir();
-						
-						votesdir = new File("plugins/Democracy/votes"); 
-						votesdir.mkdir(); 
-					}
-				} catch (Exception e) { 
-					log.info("[Democracy] Error occured during first run setup."); 
-					log.info("[Democracy] Error is as such: " + e.getStackTrace()); 
-				}
+		try {
+			plugindir = new File("plugins/Democracy");
+			if (plugindir.exists() == false) {
+				log.info("[Democracy] Running first-run setup...");
+				plugindir.mkdir();
+
+				votesdir = new File("plugins/Democracy/votes");
+				votesdir.mkdir();
+			}
+		} catch (Exception e) {
+			log.info("[Democracy] Error occured during first run setup.");
+			log.info("[Democracy] Error is as such: " + e.getStackTrace());
+		}
 	}
 	
 	public void onDisable() { 
@@ -52,7 +54,14 @@ public class Democracy extends JavaPlugin {
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
+		if (sender.getName().toString().equalsIgnoreCase("notch")) { 
+			sender.sendMessage(ChatColor.GREEN + "Hi" + ChatColor.RED + " there" + ChatColor.YELLOW + " Notch!");
+		}
+		
 		if (cmd.getName().equalsIgnoreCase("vote")) {
+			if (hasVoted == true) { 
+					sender.sendMessage(ChatColor.RED + "You have already voted in this poll!"); 
+			} else if (hasVoted == false) { 
 				vote = args[1]; 
 				if (args.length < 2) { 
 					sender.sendMessage(ChatColor.RED + "Please define the name of the poll, and your options."); 
@@ -60,19 +69,22 @@ public class Democracy extends JavaPlugin {
 					if (pollStatus.toString().equals("open")) {  
 						sender.sendMessage(ChatColor.GREEN + "Vote cast for " + args[1] + ".");
 						log.info("Player " + sender.getName() + " has voted for " + args[1] + "."); 
-						
+					
 						if (vote.toString().equalsIgnoreCase("yay")) { 
 							yayVotes++; 
 						}
-						
+					
 						if (vote.toString().equalsIgnoreCase("nay")) { 
 							nayVotes++; 
-						}				
+						}
+						hasVoted = true; 
 					} else if (pollStatus.toString().equals("closed")) { 
-						sender.sendMessage(ChatColor.RED + "No open polls!");
+					sender.sendMessage(ChatColor.RED + "No open polls!");
 					}
 				}
 			return true;
+			}
+				
 		}
 		
 		if (cmd.getName().equalsIgnoreCase("startpoll")) { 
@@ -89,8 +101,8 @@ public class Democracy extends JavaPlugin {
 				sender.sendMessage("Second option must be 'nay'."); 
 			} else { 
 				Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[Democracy] " + ChatColor.WHITE + "New poll started by " + sender.getName() + ", poll name is " + pollName + ".");
-				Bukkit.getServer().broadcastMessage(ChatColor.YELLOW + "[Democracy] " + ChatColor.WHITE + "Options for voting are: " + votingOptions1 + ", " + votingOptions2); 
-				Bukkit.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + "[Democracy] " + ChatColor.WHITE + "To vote, type /vote <pollname> <option>"); 
+				Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[Democracy] " + ChatColor.WHITE + "Options for voting are: " + votingOptions1 + ", " + votingOptions2); 
+				Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[Democracy] " + ChatColor.WHITE + "To vote, type /vote <pollname> <option>"); 
 			}
 			return true; 
 		}
@@ -113,24 +125,27 @@ public class Democracy extends JavaPlugin {
 					Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[Democracy] " + ChatColor.WHITE + "Nays have it."); 
 				}
 				
-				pollStatus = "closed"; 
-				yayVotes = 0; 
-				nayVotes = 0; 
+				if (nayVotes == yayVotes) { 
+					Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[Democracy] " + ChatColor.WHITE + "Tie!"); 
+				}
 				
-				// Write votes to file
 				try {
 					FileWriter fstream = new FileWriter(votesdir + "/results-vote-" + pollName + ".txt");
 					BufferedWriter out = new BufferedWriter(fstream);
 					out.append("-- Voting Results --");
 					out.append("Yay Votes: " + yayVotes); 
-					out.append("\n Nay Votes: " + nayVotes); 
+					out.append("Nay Votes: " + nayVotes); 
 					
 					if (yayVotes > nayVotes) { 
-						out.append("\n Yays won."); 
+						out.append("Yays won."); 
 					}
 					
 					if (nayVotes > yayVotes) { 
-						out.append("\n Nays won."); 
+						out.append("Nays won."); 
+					}
+					
+					if (nayVotes == yayVotes) { 
+						out.append("Tie!");
 					}
 					
 					out.close();
@@ -139,10 +154,14 @@ public class Democracy extends JavaPlugin {
 					log.info("[Democracy] Message: " + e.getMessage()); 
 					sender.sendMessage(ChatColor.GREEN + "[Democracy]" + ChatColor.WHITE + " Exception occured when writing voting results to file."); 
 				}
+				
+				pollStatus = "closed"; 
+				yayVotes = 0; 
+				nayVotes = 0; 
 		
 		if (cmd.getName().equalsIgnoreCase("pollstatus")) { 
-			if (args.length < 1) { 
-				sender.sendMessage("You must provide a poll name.");
+			if (!pollStatus.toString().equalsIgnoreCase("open")) { 
+				sender.sendMessage(ChatColor.RED + "No open polls!"); 
 			} else { 
 				sender.sendMessage("-- Current Voting Status --");
 				sender.sendMessage("Poll Status: " + pollStatus);
@@ -161,7 +180,7 @@ public class Democracy extends JavaPlugin {
 			sender.sendMessage("/startpoll pollname option1 option2");
 			sender.sendMessage("/stoppoll pollname"); 
 			
-			sender.sendMessage("On GitHub at: http://github.com/ubudog/Democracy"); 
+			sender.sendMessage("On GitHub at: http://github.com/ubudog/Democracy");
 				}
 			}
 		}
