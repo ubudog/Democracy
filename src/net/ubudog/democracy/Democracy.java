@@ -19,6 +19,7 @@ public class Democracy extends JavaPlugin {
 	String votingOptions1; 
 	String votingOptions2; 
 	String votingResultsYay;
+	
 	String votingResultsNay; 
 	String votingSelection; 
 	int yayVotes = 0; 
