@@ -28,12 +28,13 @@ public class Democracy extends JavaPlugin {
 	File plugindir;  
 	File votesdir; 
 	double version = 0.1; 
-	boolean hasVoted = false; 
+	boolean hasVoted = false;
 	
 	public void onEnable() { 
 		log = this.getLogger(); 
 		log.info("[Democracy] Democracy has been enabled.");
 		log.info("[Democracy] Version " + version); 
+		hasVoted = false; 
 		
 		try {
 			plugindir = new File("plugins/Democracy");
@@ -43,6 +44,8 @@ public class Democracy extends JavaPlugin {
 
 				votesdir = new File("plugins/Democracy/votes");
 				votesdir.mkdir();
+				
+				log.info("[Democracy] First-run setup complete."); 
 			}
 		} catch (Exception e) {
 			log.info("[Democracy] Error occured during first run setup.");
@@ -157,6 +160,7 @@ public class Democracy extends JavaPlugin {
 				}
 				
 				pollStatus = "closed"; 
+				hasVoted = false; 
 				yayVotes = 0; 
 				nayVotes = 0; 
 		
