@@ -5,7 +5,7 @@ version: 0.1
 commands:
    vote:
       description: Use this to cast your vote for an active poll.
-      usage: /vote <pollname> <option>s
+      usage: /vote <pollname> <option>
    startpoll:
       description: Use this to start a poll on the server.
       usage: /startpoll <pollname> <yay> <nay>
@@ -14,6 +14,7 @@ commands:
       usage: /stoppoll <pollname> 
    democracy:
       description: Use this to view Democracy's version, command info, and more.
+      usage: /democracy 
    pollstatus:
       description: Use this to view the current polling status
       usage: /pollstatus <pollname>

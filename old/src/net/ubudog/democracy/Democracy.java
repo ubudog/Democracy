@@ -28,17 +28,19 @@ public class Democracy extends JavaPlugin {
 	File plugindir;  
 	File votesdir; 
 	double version = 0.1; 
-	boolean hasVoted = false;
+//	boolean hasVoted = false;
+	boolean firstRun = false; 	
 	
 	public void onEnable() { 
 		log = this.getLogger(); 
 		log.info("[Democracy] Democracy has been enabled.");
 		log.info("[Democracy] Version " + version); 
-		hasVoted = false; 
+	//	hasVoted = false; 
 		
 		try {
 			plugindir = new File("plugins/Democracy");
 			if (plugindir.exists() == false) {
+				firstRun = true;
 				log.info("[Democracy] Running first-run setup...");
 				plugindir.mkdir();
 
@@ -63,9 +65,11 @@ public class Democracy extends JavaPlugin {
 		}
 		
 		if (cmd.getName().equalsIgnoreCase("vote")) {
+			/**
 			if (hasVoted == true) { 
 					sender.sendMessage(ChatColor.RED + "You have already voted in this poll!"); 
 			} else if (hasVoted == false) { 
+				*/ 
 				vote = args[1]; 
 				if (args.length < 2) { 
 					sender.sendMessage(ChatColor.RED + "Please define the name of the poll, and your options."); 
@@ -76,22 +80,21 @@ public class Democracy extends JavaPlugin {
 					
 						if (vote.toString().equalsIgnoreCase("yay")) { 
 							yayVotes++; 
+						//	hasVoted = true; 
 						}
 					
 						if (vote.toString().equalsIgnoreCase("nay")) { 
 							nayVotes++; 
+						//	hasVoted = true; 
 						}
-						hasVoted = true; 
 					} else if (pollStatus.toString().equals("closed")) { 
-					sender.sendMessage(ChatColor.RED + "No open polls!");
+						sender.sendMessage(ChatColor.RED + "No open polls!");
 					}
 				}
 			return true;
 			}
-				
-		}
 		
-		if (cmd.getName().equalsIgnoreCase("startpoll")) { 
+		if (cmd.getName().equalsIgnoreCase("startpoll")) {			
 			pollName = args[0]; 
 			votingOptions1 = args[1]; 
 			votingOptions2 = args[2]; 
@@ -112,6 +115,8 @@ public class Democracy extends JavaPlugin {
 		}
 		
 		if (cmd.getName().equalsIgnoreCase("stoppoll")) { 
+		//	hasVoted = false; 
+			
 			if (args.length < 1) { 
 				sender.sendMessage("Please specify the name of the poll you'd like to close.");
 				sender.sendMessage("Example: /stoppoll examplepoll"); 
@@ -160,7 +165,6 @@ public class Democracy extends JavaPlugin {
 				}
 				
 				pollStatus = "closed"; 
-				hasVoted = false; 
 				yayVotes = 0; 
 				nayVotes = 0; 
 		
